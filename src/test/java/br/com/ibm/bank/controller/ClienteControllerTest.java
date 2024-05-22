@@ -50,9 +50,16 @@ class ClienteControllerTest {
 
 	@Test
 	public void testPostClienteEmailExistente() {
-		ClienteRequest request = new ClienteRequest(UUID.randomUUID(), "teste", 24, "gabriel.menezes3@hotmail.com", "123987623");
+		ClienteRequest request = new ClienteRequest(UUID.randomUUID(), "teste", 24, "teste@teste.com", "123987623");
 		ResponseEntity<ClienteResponse> response = restTemplate.postForEntity(API_CLIENTES, request, ClienteResponse.class);
-		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertNotNull(response.getBody());
+
+		ClienteRequest requestBad = new ClienteRequest(UUID.randomUUID(), "teste", 24, request.email(), "123987623");
+		ResponseEntity<ClienteResponse> responseBad = restTemplate.postForEntity(API_CLIENTES, requestBad, ClienteResponse.class);
+		assertEquals(HttpStatus.BAD_REQUEST, responseBad.getStatusCode());
+		clienteId = response.getBody().clienteId();
 	}
 
 	@Test
